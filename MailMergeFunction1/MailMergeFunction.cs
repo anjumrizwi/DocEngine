@@ -2,8 +2,8 @@ using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-//using Microsoft.Azure.WebJobs;
-//using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Azure.Storage.Blobs;
@@ -11,20 +11,12 @@ using SendGrid;
 using SendGrid.Helpers.Mail;
 using DocumentFormat.OpenXml.Packaging;
 using System;
-using Microsoft.Azure.Functions.Worker;
 
 namespace MailMergeFunctionApp
 {
-    public class MailMergeFunction
+    public static class MailMergeFunction
     {
-        private readonly ILogger<MailMergeFunction> _logger;
-
-        public MailMergeFunction(ILogger<MailMergeFunction> logger)
-        {
-            _logger = logger;
-        }
-
-        [Function("MailMergeFunction")]
+        [FunctionName("MailMergeFunction")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
             ILogger log)
@@ -82,7 +74,7 @@ namespace MailMergeFunctionApp
             var apiKey = Environment.GetEnvironmentVariable("SendGridApiKey");
             var client = new SendGridClient(apiKey);
 
-            var from = new EmailAddress("anjumrizwi@gmail.com", "MailMerge App");
+            var from = new EmailAddress("no-reply@example.com", "MailMerge App");
             var to = new EmailAddress(data.Email, $"{data.FirstName} {data.LastName}");
             var subject = "Your Mail Merge Letter";
             var content = "Attached is your personalized document.";
@@ -98,10 +90,10 @@ namespace MailMergeFunctionApp
 
         private class MergeRequest
         {
-            public string? FirstName { get; set; }
-            public string? LastName { get; set; }
-            public string? Address { get; set; }
-            public string? Email { get; set; }
+            public string FirstName { get; set; }
+            public string LastName { get; set; }
+            public string Address { get; set; }
+            public string Email { get; set; }
         }
     }
 }
