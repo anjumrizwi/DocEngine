@@ -109,7 +109,7 @@ namespace MailMergeTestApp
             string inputFolder = DOCX_PATH;
             string outputFolder = REPORT_PATH;
 
-            DocxToPdfConverter.ConvertAllDocxInFolder(inputFolder, outputFolder);
+            DocxToPdfConverter.ConvertAllInFolder(inputFolder, outputFolder);
 
             Console.WriteLine("All conversions completed.");
         }

@@ -8,10 +8,11 @@
     using System.Text;
     using System.IO;
     using Wp = DocumentFormat.OpenXml.Wordprocessing;
+    using Path = Path;
 
     public static class DocxToPdfConverter
     {
-        public static void ConvertAllDocxInFolder(string inputFolder, string outputFolder)
+        public static void ConvertAllInFolder(string inputFolder, string outputFolder)
         {
             if (!Directory.Exists(inputFolder))
                 throw new DirectoryNotFoundException($"Input folder not found: {inputFolder}");
@@ -20,21 +21,26 @@
                 Directory.CreateDirectory(outputFolder);
 
             var docxFiles = Directory.GetFiles(inputFolder, "*.docx");
-            foreach (var docxFile in docxFiles)
+
+            foreach (var file in docxFiles)
             {
-                var fileName = System.IO.Path.GetFileNameWithoutExtension(docxFile);
-                var outputPdfPath = System.IO.Path.Combine(outputFolder, $"{fileName}.pdf");
+                string fileName = Path.GetFileNameWithoutExtension(file);
+                string outputFile = Path.Combine(outputFolder, fileName + ".pdf");
 
-                if (File.Exists(outputPdfPath))
-                    File.Delete(outputPdfPath);
-                Console.WriteLine($"Converting {docxFile} to {outputPdfPath}");
-
-                // Convert the file
-                Convert(docxFile, outputPdfPath);
+                try
+                {
+                    Console.WriteLine($"Converting: {fileName}.docx → {fileName}.pdf");
+                    Convert(file, outputFile);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error converting {fileName}: {ex.Message}");
+                }
             }
         }
 
-        private static void Convert(string docxPath, string outputPdfPath)
+
+        public static void Convert(string docxPath, string outputPdfPath)
         {
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
@@ -62,7 +68,7 @@
                     case Wp.Paragraph para:
                         foreach (var run in para.Elements<Wp.Run>())
                         {
-                            if (run.Descendants<Wp.Break>().Any(b => b.Type?.Value == BreakValues.Page))
+                            if (run.Descendants<Wp.Break>().Any(b => b.Type?.Value == Wp.BreakValues.Page))
                             {
                                 page = document.AddPage();
                                 gfx = XGraphics.FromPdfPage(page);
@@ -191,5 +197,6 @@
             };
         }
     }
+
 
 }
