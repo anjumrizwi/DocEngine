@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -8,13 +8,28 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DocxToPdf\DocxToPdf.csproj" />
-    <ProjectReference Include="..\MailMerge.Business\MailMerge.Business.csproj" />
-    <ProjectReference Include="..\OpenXmlMailMerge\OpenXmlMailMerge.csproj" />
+    <Compile Remove="%2a%2a\**" />
+    <EmbeddedResource Remove="%2a%2a\**" />
+    <None Remove="%2a%2a\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="output\" />
+    <Compile Remove="%2a%2a/%2a.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="%2a%2a/%2a.resx" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="%2a%2a/%2a" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AsposeWords\AsposeWords.csproj" />
+    <ProjectReference Include="..\DocxToPdf\DocxToPdf.csproj" />
+    <ProjectReference Include="..\MailMerge.Business\MailMerge.Business.csproj" />
+    <ProjectReference Include="..\OpenXmlMailMerge\OpenXmlMailMerge.csproj" />
   </ItemGroup>
 
 </Project>

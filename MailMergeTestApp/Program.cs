@@ -13,6 +13,7 @@ namespace MailMergeTestApp
         const string TEMPLATE_PATH = FOLDER_PATH + @"template\";
         const string DOCX_PATH = FOLDER_PATH + @"output\";
         const string REPORT_PATH = FOLDER_PATH + @"report\";
+        const string PRN_PATH = FOLDER_PATH + @"prn\";
 
         static async Task Main(string[] args)
         {
@@ -24,7 +25,7 @@ namespace MailMergeTestApp
             PerformBatchMailMerge();
 
             ///DOCS to PDF
-            await Task.Run(() => ConvertDocxToPdf());
+            //await Task.Run(() => ConvertDocxToPdf());
             //await Task.Run(() => WordToPdfBatchConverter());
 
             //await Task.Run(() => WordToPdfParagraphPreserving());
@@ -33,6 +34,9 @@ namespace MailMergeTestApp
 
             //await ExecuteMailMergeFunction();
             //Console.WriteLine("Azure Function: Mail merge completed. Press any key to exit.");  
+
+            ConvertApposeDocxToPdf();
+
         }
 
         private static void PerformBatchMailMerge()
@@ -134,6 +138,15 @@ namespace MailMergeTestApp
             Console.WriteLine("All bach conversions completed.");
         }
 
-        
+        public static void ConvertApposeDocxToPdf()
+        {
+            string inputFile = DOCX_PATH;
+            string outputFile = REPORT_PATH;
+            string prnFile = PRN_PATH;
+
+            AsposeWords.AsposeConverter.ConvertAllDocToPdfInFolder(inputFile, outputFile);
+
+            AsposeWords.AsposeConverter.ConvertAllPdfToPrnInFolder(inputFile, prnFile);
+        }
     }
 }

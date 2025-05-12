@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.IO;
+    using Xceed.Document.NET;
     using Xceed.Words.NET;
 
     public static class XceedMailMergeHelper
@@ -24,7 +25,14 @@
             {
                 foreach (var entry in placeholders)
                 {
-                    document.ReplaceText("{{" + entry.Key + "}}", entry.Value);
+                    // Use StringReplaceTextOptions to fix the obsolete ReplaceText method
+                    var replaceOptions = new StringReplaceTextOptions
+                    {
+                        SearchValue = "{{" + entry.Key + "}}",
+                        NewValue = entry.Value,
+                        TrackChanges = false
+                    };
+                    document.ReplaceText(replaceOptions);
                 }
 
                 using (var outputStream = new MemoryStream())
@@ -35,6 +43,5 @@
                 }
             }
         }
-
     }
 }

@@ -1,14 +1,18 @@
 ﻿namespace DocxToPdf
 {
+    using System;
+    using System.IO;
+    using System.Linq;
+    using System.Collections.Generic;
     using DocumentFormat.OpenXml.Packaging;
-    using DocumentFormat.OpenXml.Wordprocessing;
     using DocumentFormat.OpenXml.Drawing;
     using PdfSharpCore.Drawing;
     using PdfSharpCore.Pdf;
     using System.Text;
-    using System.IO;
+
+    // Aliases to avoid conflicts
     using Wp = DocumentFormat.OpenXml.Wordprocessing;
-    using Path = Path;
+    using IOPath = System.IO.Path;
 
     public static class DocxToPdfConverter
     {
@@ -24,8 +28,8 @@
 
             foreach (var file in docxFiles)
             {
-                string fileName = Path.GetFileNameWithoutExtension(file);
-                string outputFile = Path.Combine(outputFolder, fileName + ".pdf");
+                string fileName = IOPath.GetFileNameWithoutExtension(file);
+                string outputFile = IOPath.Combine(outputFolder, fileName + ".pdf");
 
                 try
                 {
@@ -34,11 +38,12 @@
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Error converting {fileName}: {ex.Message}");
+                    Console.WriteLine($"❌ Error converting {fileName}: {ex.Message}");
                 }
             }
-        }
 
+            Console.WriteLine("✅ Batch conversion complete.");
+        }
 
         public static void Convert(string docxPath, string outputPdfPath)
         {
