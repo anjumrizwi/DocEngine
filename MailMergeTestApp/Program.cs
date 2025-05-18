@@ -1,6 +1,7 @@
 using System;
 using System.Net.Http;
 using System.Text;
+using AsposeWords;
 using DocxToPdf;
 using MailMerge.Business;
 using OpenXmlMailMerge;
@@ -9,11 +10,12 @@ namespace MailMergeTestApp
 {
     class Program
     {
-        const string FOLDER_PATH = @"D:\\Users\\anjum.rizwi\\Documents\\Valtech\\SAGENT-POC\\MailMergeFun\\MailMergeTestApp\";
-        const string TEMPLATE_PATH = FOLDER_PATH + @"template\";
-        const string DOCX_PATH = FOLDER_PATH + @"output\";
-        const string REPORT_PATH = FOLDER_PATH + @"report\";
-        const string PRN_PATH = FOLDER_PATH + @"prn\";
+        const string BASE_PATH = @"D:\\Users\\anjum.rizwi\\Documents\\Valtech\\SAGENT-POC\\MailMergeFun\\MailMergeTestApp\\";
+        const string TEMPLATE_PATH = BASE_PATH + @"template\\";
+        const string DOCX_PATH = BASE_PATH + @"docx\\";
+        const string REPORT_PATH = BASE_PATH + @"pdf\\";
+        const string PRN_PATH = BASE_PATH + @"prn\\";
+        const string PRN_TEST_PATH = BASE_PATH + @"test\\";
 
         static async Task Main(string[] args)
         {
@@ -22,8 +24,12 @@ namespace MailMergeTestApp
             // Console.WriteLine("Xceed.Words.NET: Mail merge completed. Press any key to exit.");
 
             //Option2: Using DocumentFormat.OpenXml SDK
-            PerformBatchMailMerge();
+            //PerformBatchMailMerge();
 
+           // MailMergeHelper.ExecuteDataTable(DOCX_PATH);
+
+            var templateFilePath = TEMPLATE_PATH + "Business-Plan-Word-Template.docx";
+            MailMergeHelper.ExecuteDataTable(templateFilePath, DOCX_PATH, GetRecepientData());
             ///DOCS to PDF
             //await Task.Run(() => ConvertDocxToPdf());
             //await Task.Run(() => WordToPdfBatchConverter());
@@ -41,30 +47,36 @@ namespace MailMergeTestApp
 
         private static void PerformBatchMailMerge()
         {
-            OpenXmlMailMergeHelper.PerformBatchMailMerge("file-sample_500kB.docx", "output", new List<Dictionary<string, string>>()
+            var docFilePath = TEMPLATE_PATH + "Business-Plan-Word-Template.docx";
+            OpenXmlMailMergeHelper.PerformBatchMailMerge(docFilePath, DOCX_PATH, GetRecepientData());
+        }
+
+        private static List<Dictionary<string, string>> GetRecepientData()
+        {
+            return new List<Dictionary<string, string>>()
             {
                 new Dictionary<string, string>
                 {
                     { "Name", "Anjum Rizwi" },
                     { "Date", DateTime.Today.ToShortDateString() },
                     { "Address", "382, 6th Cross, SK Garden, Bengaluru" },
-                    { "Company Name", "Valtech India" }
+                    { "Company", "Valtech India" }
                 },
                 new Dictionary<string, string>
                 {
                     { "Name", "Arun" },
                     { "Date", DateTime.Today.ToShortDateString() },
                     { "Address", "382, 6th Cross, JP Nagar, Bengaluru" },
-                    { "Company Name", "Valtech India" }
+                    { "Company", "Valtech India" }
                 },
                 new Dictionary<string, string>
                 {
                     { "Name", "John Doe" },
                     { "Date", DateTime.Today.ToShortDateString() },
                     { "Address", "123 Test Street, Bengaluru" },
-                    { "Company Name", "Valtech US" }
+                    { "Company", "Valtech US" }
                 }
-            });
+            };
         }
 
         private static async Task ExecuteMailMergeFunction()
@@ -142,11 +154,16 @@ namespace MailMergeTestApp
         {
             string inputFile = DOCX_PATH;
             string outputFile = REPORT_PATH;
-            string prnFile = PRN_PATH;
 
-            AsposeWords.AsposeConverter.ConvertAllDocToPdfInFolder(inputFile, outputFile);
+            AsposeWords.AsposeDocxToPdfConverter.ConvertAllDocToPdfInFolder(inputFile, outputFile);
 
-            AsposeWords.AsposeConverter.ConvertAllPdfToPrnInFolder(inputFile, prnFile);
+            inputFile = REPORT_PATH;
+            outputFile = PRN_PATH;
+            AsposeWords.AsposePdfToPrnConverter.ConvertAllPdfToPrnInFolder(inputFile, outputFile);
+
+            inputFile = PRN_PATH;
+            outputFile = PRN_TEST_PATH;
+            //AsposePrnToPdfConverter.ConvertAllPrnToPdfInFolder(inputFile, outputFile);
         }
     }
 }

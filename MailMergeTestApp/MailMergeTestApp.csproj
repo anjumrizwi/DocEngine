@@ -26,10 +26,28 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="Program.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="template\file-sample_1MB.docx" />
+    <None Include="template\file-sample_500kB.doc" />
+    <None Include="template\file-sample_500kB.docx" />
+    <None Include="template\MailMerge_Letter_Template.docx" />
+    <None Include="template\Readme.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\AsposeWords\AsposeWords.csproj" />
     <ProjectReference Include="..\DocxToPdf\DocxToPdf.csproj" />
     <ProjectReference Include="..\MailMerge.Business\MailMerge.Business.csproj" />
     <ProjectReference Include="..\OpenXmlMailMerge\OpenXmlMailMerge.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="output\" />
+    <Folder Include="prn\" />
+    <Folder Include="report\" />
   </ItemGroup>
 
 </Project>

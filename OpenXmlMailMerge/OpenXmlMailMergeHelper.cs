@@ -11,9 +11,9 @@ namespace OpenXmlMailMerge
 
     public static class OpenXmlMailMergeHelper
     {
-        const string FOLDER_PATH = @"D:\\Users\\anjum.rizwi\\Documents\\Valtech\\SAGENT-POC\\MailMergeFun\\MailMergeTestApp\";
-        const string TEMPLATE_PATH = FOLDER_PATH + @"template\";
-        const string OUTPUT_PATH = FOLDER_PATH + @"output\";
+        //const string FOLDER_PATH = @"D:\\Users\\anjum.rizwi\\Documents\\Valtech\\SAGENT-POC\\MailMergeFun\\MailMergeTestApp\";
+        //const string TEMPLATE_PATH = FOLDER_PATH + @"template\";
+        //const string OUTPUT_PATH = FOLDER_PATH + @"output\";
 
         /// <summary>
         /// Performs mail merge for multiple recipients and creates one output file per recipient.
@@ -24,12 +24,12 @@ namespace OpenXmlMailMerge
         public static void PerformBatchMailMerge(string templatePath, string outputDirectory, List<Dictionary<string, string>> recipientData)
         {
             //Directory.CreateDirectory(outputDirectory);
-            templatePath = TEMPLATE_PATH + templatePath;
-            outputDirectory = OUTPUT_PATH;
+            //templatePath = templatePath;
+            //outputDirectory = OUTPUT_PATH;
 
             for (int i = 0; i < recipientData.Count; i++)
             {
-                string fileName = $"Merged_Letter_{i + 1}_{Guid.NewGuid().ToString()}.docx"; ;
+                string fileName = $"Merged_{i + 1}_{Guid.NewGuid().ToString()}.docx"; ;
                 string outputPath = Path.Combine(outputDirectory, fileName);
 
                 File.Copy(templatePath, outputPath, true);
