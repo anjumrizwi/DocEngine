@@ -3,17 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.13.35913.81
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MailMergeTestApp", "MailMergeTestApp\MailMergeTestApp.csproj", "{7669EC26-CCA1-2DA2-880E-8230DA943EFA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocEngine.TestClient", "MailMergeTestApp\DocEngine.TestClient.csproj", "{7669EC26-CCA1-2DA2-880E-8230DA943EFA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MailMergeFunction", "MailMergeFunction\MailMergeFunction.csproj", "{2429A133-92C2-4EE6-99B7-33F689E0644D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MailMerge.Business", "MailMerge.Business\MailMerge.Business.csproj", "{66A32677-617B-4D64-812F-B39E36E28B09}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocEngine.XceedUtils", "MailMerge.Business\DocEngine.XceedUtils.csproj", "{66A32677-617B-4D64-812F-B39E36E28B09}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenXmlMailMerge", "OpenXmlMailMerge\OpenXmlMailMerge.csproj", "{C751CEBE-4002-4B55-955C-A41666701F50}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocEngine.MailMerge", "OpenXmlMailMerge\DocEngine.MailMerge.csproj", "{C751CEBE-4002-4B55-955C-A41666701F50}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocxToPdf", "DocxToPdf\DocxToPdf.csproj", "{7FA64DE0-B4CF-432E-B3C1-85F434F6E749}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocEngine.Processor", "DocxToPdf\DocEngine.Processor.csproj", "{7FA64DE0-B4CF-432E-B3C1-85F434F6E749}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AsposeWords", "AsposeWords\AsposeWords.csproj", "{0D87BC6A-58FA-4441-86B2-FDF88AE89631}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocEngine.AsposeWords", "AsposeWords\DocEngine.AsposeWords.csproj", "{0D87BC6A-58FA-4441-86B2-FDF88AE89631}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleHTTPClient", "SampleHTTPClient\SampleHTTPClient.csproj", "{E2CD3CAF-F6E0-409A-8ED8-2778BE624170}"
 EndProject

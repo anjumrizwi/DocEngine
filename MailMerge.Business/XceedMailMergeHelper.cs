@@ -1,4 +1,4 @@
-﻿namespace MailMerge.Business
+﻿namespace Sagent.XceedUtils
 {
     using System.Collections.Generic;
     using System.IO;

@@ -27,6 +27,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="AsposeHelper.cs" />
+    <Compile Include="DataHelper.cs" />
     <Compile Include="Program.cs" />
   </ItemGroup>
 
@@ -39,10 +41,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AsposeWords\AsposeWords.csproj" />
-    <ProjectReference Include="..\DocxToPdf\DocxToPdf.csproj" />
-    <ProjectReference Include="..\MailMerge.Business\MailMerge.Business.csproj" />
-    <ProjectReference Include="..\OpenXmlMailMerge\OpenXmlMailMerge.csproj" />
+    <ProjectReference Include="..\AsposeWords\DocEngine.AsposeWords.csproj" />
+    <ProjectReference Include="..\DocxToPdf\DocEngine.Processor.csproj" />
+    <ProjectReference Include="..\MailMerge.Business\DocEngine.XceedUtils.csproj" />
+    <ProjectReference Include="..\OpenXmlMailMerge\DocEngine.MailMerge.csproj" />
   </ItemGroup>
 
   <ItemGroup>

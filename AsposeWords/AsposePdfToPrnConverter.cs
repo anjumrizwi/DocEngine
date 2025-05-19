@@ -1,7 +1,7 @@
 ﻿//using System.Reflection.Metadata;
 using System.Diagnostics;
-using System.IO;
 using Aspose.Pdf;
+using Aspose.Pdf.Devices;
 using Aspose.Pdf.Facades;
 using Aspose.Pdf.Printing;
 namespace AsposeWords
@@ -52,8 +52,18 @@ namespace AsposeWords
             {
                 PrinterName = "Microsoft Print to PDF",
                 PrintToFile = true,
-                PrintFileName = prnFile
+                PrintFileName = prnFile,
+               
+
             };
+
+            printerSettings.DefaultPageSettings.Margins = new Margins(20, 20, 20, 20);
+            printerSettings.DefaultPageSettings.Landscape = false;
+            printerSettings.DefaultPageSettings.Color = false;
+            printerSettings.DefaultPageSettings.PrinterResolution.Kind = PrinterResolutionKind.High;
+            printerSettings.DefaultPageSettings.PrinterResolution.X = 600;
+            printerSettings.DefaultPageSettings.PrinterResolution.Y = 600;
+
 
             PdfViewer viewer = new PdfViewer(pdfDocument);
             viewer.PrintDocumentWithSettings(printerSettings);

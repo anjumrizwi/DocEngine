@@ -1,8 +1,4 @@
 ﻿using static System.Net.Mime.MediaTypeNames;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using Aspose.Pdf.Operators;
 using Aspose.Words.Replacing;
 using Aspose.Words;
 using System.Diagnostics;
@@ -12,7 +8,7 @@ using System.Data;
 namespace AsposeWords
 {
 
-    public static class MailMergeHelper
+    public static class AsposeMailMergeHelper
     {
         public static void ExecuteDataTable(string templatePath, string outputDirectory, List<Dictionary<string, string>> recipientData)
         {
@@ -53,15 +49,19 @@ namespace AsposeWords
             Document doc = CreateSourceDocExecuteDataTable();
 
             doc.MailMerge.Execute(table);
-
-            doc.Save(outputDirectory + "MailMerge.ExecuteDataTable.WholeTable.docx");
+            var fileName = "MailMerge.ExecuteDataTable.WholeTable.docx";
+            doc.Save(outputDirectory + fileName);
 
             // 2 -  Use one row of the table to create one output mail merge document:
+            fileName = "MailMerge.ExecuteDataTable.OneRow.docx";
+            var stopwatch = Stopwatch.StartNew();
             doc = CreateSourceDocExecuteDataTable();
 
             doc.MailMerge.Execute(table.Rows[1]);
 
-            doc.Save(outputDirectory + "MailMerge.ExecuteDataTable.OneRow.docx");
+            doc.Save(outputDirectory + fileName);
+            stopwatch.Stop();
+            Console.WriteLine($"[SUCCESS] {fileName} converted in {stopwatch.Elapsed.TotalSeconds:F2} seconds");
         }
         /// <summary>
         /// Creates a mail merge source document.
