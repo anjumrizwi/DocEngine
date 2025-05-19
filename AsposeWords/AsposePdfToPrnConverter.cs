@@ -1,4 +1,5 @@
 ﻿//using System.Reflection.Metadata;
+using System.Diagnostics;
 using System.IO;
 using Aspose.Pdf;
 using Aspose.Pdf.Facades;
@@ -29,7 +30,10 @@ namespace AsposeWords
                 try
                 {
                     Console.WriteLine($"Converting: {fileName}.pdf → {fileName}.prn");
+                    var stopwatch = Stopwatch.StartNew();
                     ConvertPdfToPrn(file, outputFile);
+                    stopwatch.Stop();
+                    Console.WriteLine($"[SUCCESS] {fileName} converted in {stopwatch.Elapsed.TotalSeconds:F2} seconds");
                 }
                 catch (Exception ex)
                 {

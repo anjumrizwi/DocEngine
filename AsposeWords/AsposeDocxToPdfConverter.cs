@@ -1,4 +1,5 @@
 ﻿
+using System.Diagnostics;
 using System.IO;
 using Aspose.Words;
 namespace AsposeWords
@@ -26,7 +27,10 @@ namespace AsposeWords
                 try
                 {
                     Console.WriteLine($"Converting: {fileName}.docx → {fileName}.pdf");
+                    var stopwatch = Stopwatch.StartNew();
                     ConvertToPdf(file, outputFile);
+                    stopwatch.Stop();
+                    Console.WriteLine($"[SUCCESS] {fileName} converted in {stopwatch.Elapsed.TotalSeconds:F2} seconds");
                 }
                 catch (Exception ex)
                 {

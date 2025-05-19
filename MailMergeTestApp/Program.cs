@@ -10,7 +10,7 @@ namespace MailMergeTestApp
 {
     class Program
     {
-        const string BASE_PATH = @"D:\\Users\\anjum.rizwi\\Documents\\Valtech\\SAGENT-POC\\MailMergeFun\\MailMergeTestApp\\";
+        const string BASE_PATH = @"D:\\Users\\anjum.rizwi\\source\repos\\anjumrizwi\\MailMerge\\MailMergeTestApp\\";
         const string TEMPLATE_PATH = BASE_PATH + @"template\\";
         const string DOCX_PATH = BASE_PATH + @"docx\\";
         const string REPORT_PATH = BASE_PATH + @"pdf\\";
