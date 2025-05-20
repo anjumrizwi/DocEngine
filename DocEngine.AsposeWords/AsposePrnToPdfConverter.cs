@@ -1,5 +1,5 @@
 ﻿using Aspose.Cells;
-namespace AsposeWords
+namespace DocEngine.AsposeWords
 {
     public class AsposePrnToPdfConverter
     {

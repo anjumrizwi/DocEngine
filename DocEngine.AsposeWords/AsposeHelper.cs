@@ -1,13 +1,14 @@
-﻿using AsposeWords;
+﻿using DocEngine.AsposeWords;
+using DocEngine.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MailMergeTestApp
+namespace DocEngine.Aspose
 {
-    internal class AsposeHelper
+    public class AsposeHelper
     {
         const string BASE_PATH = @"D:\\Users\\anjum.rizwi\\source\repos\\anjumrizwi\\MailMerge\\MailMergeTestApp\\";
         const string TEMPLATE_PATH = BASE_PATH + @"template\\";
@@ -94,14 +95,14 @@ namespace MailMergeTestApp
             string inputFile = docxFilePath;
             string outputFile = pdfOutputFilePath;
 
-            AsposeWords.AsposeDocxToPdfConverter.ConvertAllDocToPdfInFolder(inputFile, outputFile);
+            DocEngine.AsposeWords.AsposeDocxToPdfConverter.ConvertAllDocToPdfInFolder(inputFile, outputFile);
         }
 
         private static void ConvertApposePdfToPrn(string pdfFilePath, string prnOutputFilePath)
         {
             string inputFile = pdfFilePath;
             string outputFile = prnOutputFilePath;
-            AsposeWords.AsposePdfToPrnConverter.ConvertAllPdfToPrnInFolder(inputFile, outputFile);
+            DocEngine.AsposeWords.AsposePdfToPrnConverter.ConvertAllPdfToPrnInFolder(inputFile, outputFile);
         }
 
         private static void ConvertApposePrnToPdf(string prnFilePath, string prn_pdfOutputFilePath)

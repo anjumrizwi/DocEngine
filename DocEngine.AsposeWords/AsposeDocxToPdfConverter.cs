@@ -1,7 +1,7 @@
 ﻿
 using System.Diagnostics;
 using Aspose.Words;
-namespace AsposeWords
+namespace DocEngine.AsposeWords
 {
     /// <summary>
     /// Docs to PDF converter

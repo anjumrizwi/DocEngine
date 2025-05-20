@@ -4,7 +4,7 @@ using Aspose.Pdf;
 using Aspose.Pdf.Devices;
 using Aspose.Pdf.Facades;
 using Aspose.Pdf.Printing;
-namespace AsposeWords
+namespace DocEngine.AsposeWords
 {
     public class AsposePdfToPrnConverter
     {

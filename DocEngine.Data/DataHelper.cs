@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MailMergeTestApp
+namespace DocEngine.Data
 {
-    internal class DataHelper
+    public class DataHelper
     {
         public static List<Dictionary<string, string>> GetRecepientData()
         {

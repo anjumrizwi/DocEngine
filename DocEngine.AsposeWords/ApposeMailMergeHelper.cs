@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Data;
 
-namespace AsposeWords
+namespace DocEngine.AsposeWords
 {
 
     public static class AsposeMailMergeHelper

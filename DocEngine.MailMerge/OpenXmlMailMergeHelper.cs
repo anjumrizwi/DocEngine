@@ -6,7 +6,7 @@ using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using WordText = DocumentFormat.OpenXml.Wordprocessing.Text;
 
-namespace OpenXmlMailMerge
+namespace DocEngine.MailMerge
 {
 
     public static class OpenXmlMailMergeHelper
