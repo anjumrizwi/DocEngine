@@ -11,7 +11,13 @@
   <ItemGroup>
     <Compile Remove="%2a%2a\**" />
     <EmbeddedResource Remove="%2a%2a\**" />
+    <EmbeddedResource Remove="output\**" />
+    <EmbeddedResource Remove="prn\**" />
+    <EmbeddedResource Remove="report\**" />
     <None Remove="%2a%2a\**" />
+    <None Remove="output\**" />
+    <None Remove="prn\**" />
+    <None Remove="report\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -36,12 +42,6 @@
     <None Include="template\file-sample_500kB.docx" />
     <None Include="template\MailMerge_Letter_Template.docx" />
     <None Include="template\Readme.txt" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="output\" />
-    <Folder Include="prn\" />
-    <Folder Include="report\" />
   </ItemGroup>
 
   <ItemGroup>
