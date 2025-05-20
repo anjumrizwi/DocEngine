@@ -361,3 +361,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/DocEngine.TestClient/docx/*.docx
+/DocEngine.TestClient/pdf/*.pdf
+/DocEngine.TestClient/output/*.docx
