@@ -1,9 +1,0 @@
-{
-  "profiles": {
-    "MailMergeFunction": {
-      "commandName": "Project",
-      "commandLineArgs": "--port 7249",
-      "launchBrowser": false
-    }
-  }
-}
