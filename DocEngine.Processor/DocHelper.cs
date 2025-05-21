@@ -16,6 +16,7 @@ namespace DocEngine.Processor
             //ConvertDocxToPdf(basePath);
             //ConvertBatchDocxToPdf(basePath);
             PreserveWordToPdfParagraph(basePath);
+            ConvertPdfToPrn(basePath);
         }
 
         private static void PerformBatchMailMerge(string basePath)
@@ -54,6 +55,14 @@ namespace DocEngine.Processor
             WordToPdfParagraphPreserving.ConvertAllDocxInFolder(inputFolder, outputFolder);
 
             Console.WriteLine("All bach conversions completed.");
+        }
+
+        private static void ConvertPdfToPrn(string basePath)
+        {
+            string inputFolder = Path.Combine(basePath, "pdf");
+            string outputFolder = Path.Combine(basePath, "prn");
+
+            PdfToPrnConverter.ConvertAllInFolder(inputFolder, outputFolder);
         }
     }
 }

@@ -1,13 +1,6 @@
-﻿using Sagent.XceedUtils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Sagent.XceedUtils
+﻿namespace DocEngine.XceedUtils
 {
-    internal class XceedHelper
+    public class XceedHelper
     {
         public static void Convert()
         {

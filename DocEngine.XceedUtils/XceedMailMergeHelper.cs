@@ -1,4 +1,4 @@
-﻿namespace Sagent.XceedUtils
+﻿namespace DocEngine.XceedUtils
 {
     using System.Collections.Generic;
     using System.IO;
@@ -7,6 +7,12 @@
 
     public static class XceedMailMergeHelper
     {
+        static XceedMailMergeHelper()
+        {
+            // Private constructor to prevent instantiation
+            Xceed.Words.NET.Licenser.LicenseKey = "WDN50-KWASA-4WWEY-9A1A";
+        }
+    
         const string FOLDER_PATH = @"D:\\Users\\anjum.rizwi\\Documents\\Valtech\\SAGENT-POC\\MailMergeFun\\MailMergeTestApp\";
         const string TEMPLATE_PATH = FOLDER_PATH + @"template\";
         const string OUTPUT_PATH = FOLDER_PATH + @"output\";
