@@ -11,11 +11,14 @@ namespace DocEngine.Processor
             //MailMergeUsingTemplater();
 
             //MailMerge-Option2: DocumentFormat.OpenXml: MIT license
-            PerformBatchMailMerge(basePath, 10000);
+            PerformBatchMailMerge(basePath, 3);
 
-            //ConvertDocxToPdf(basePath);
-            //ConvertBatchDocxToPdf(basePath);
-            //PreserveWordToPdfParagraph(basePath);
+            //Convert: Docx to Pdf
+            ConvertDocxToPdf(basePath); //Image size issue
+            //ConvertBatchDocxToPdf(basePath); //Single line output pdf file
+            //PreserveWordToPdfParagraph(basePath); //Image missing
+
+            //Convert: Pdf to Prn
             //ConvertPdfToPrn(basePath);
         }
 
@@ -62,7 +65,7 @@ namespace DocEngine.Processor
 
             WordToPdfParagraphPreserving.ConvertAllDocxInFolder(inputFolder, outputFolder);
 
-            Console.WriteLine("All bach conversions completed.");
+            Console.WriteLine("All batch conversions completed.");
         }
 
         private static void ConvertPdfToPrn(string basePath)

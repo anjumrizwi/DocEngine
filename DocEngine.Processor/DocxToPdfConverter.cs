@@ -12,10 +12,14 @@
 
     // Aliases to avoid conflicts
     using Wp = DocumentFormat.OpenXml.Wordprocessing;
-    using IOPath = System.IO.Path;
+    using NLog;
+    using System.Diagnostics;
+    using DocumentFormat.OpenXml.Wordprocessing;
 
     internal static class DocxToPdfConverter
     {
+        private static Logger logger = LogManager.GetCurrentClassLogger();
+
         public static void ConvertAllInFolder(string inputFolder, string outputFolder)
         {
             if (!Directory.Exists(inputFolder))
@@ -24,25 +28,31 @@
             if (!Directory.Exists(outputFolder))
                 Directory.CreateDirectory(outputFolder);
 
+            logger.Info("Batch DocxToPdf Process started...");
+            var stopwatch = Stopwatch.StartNew();
+
             var docxFiles = Directory.GetFiles(inputFolder, "*.docx");
 
             foreach (var file in docxFiles)
             {
-                string fileName = IOPath.GetFileNameWithoutExtension(file);
-                string outputFile = IOPath.Combine(outputFolder, fileName + ".pdf");
+                string fileName = System.IO.Path.GetFileNameWithoutExtension(file);
+                string outputFile = System.IO.Path.Combine(outputFolder, fileName + ".pdf");
 
                 try
                 {
-                    Console.WriteLine($"Converting: {fileName}.docx → {fileName}.pdf");
+                    Console.WriteLine($"Converting: {fileName}.docx -> {fileName}.pdf");
                     Convert(file, outputFile);
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"❌ Error converting {fileName}: {ex.Message}");
+                    Console.WriteLine($"Error converting {fileName}: {ex.Message}");
                 }
             }
+            
+            stopwatch.Stop();
+            logger.Info($"[SUCCESS]: {docxFiles.Length} docx files converted to pdf in {stopwatch.Elapsed.TotalSeconds:F2} seconds");
 
-            Console.WriteLine("✅ Batch conversion complete.");
+            Console.WriteLine("Docx2Pdf Batch conversion complete.");
         }
 
         public static void Convert(string docxPath, string outputPdfPath)

@@ -9,13 +9,24 @@ namespace DocEngine.Processor
     using DocumentFormat.OpenXml.Wordprocessing;
     using PdfSharpCore.Pdf;
     using PdfSharpCore.Drawing;
+    using NLog;
+    using System.Diagnostics;
 
     internal class WordToPdfParagraphPreserving
     {
+        private static Logger logger = LogManager.GetCurrentClassLogger();
+
         public static void ConvertAllDocxInFolder(string inputFolder, string outputFolder)
         {
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-            Directory.CreateDirectory(outputFolder);
+            if (!Directory.Exists(outputFolder))
+                Directory.CreateDirectory(outputFolder);
+
+            if (!Directory.Exists(inputFolder))
+                throw new DirectoryNotFoundException($"Input folder not found: {inputFolder}");
+
+            logger.Info("Batch DocxToPdf Process started...");
+            var stopwatch = Stopwatch.StartNew();
 
             var docxFiles = Directory.GetFiles(inputFolder, "*.docx");
 
@@ -35,6 +46,9 @@ namespace DocEngine.Processor
                     Console.WriteLine($"❌ Error: {fileName}.docx - {ex.Message}");
                 }
             }
+            stopwatch.Stop();
+            logger.Info($"[SUCCESS]: {docxFiles.Length} docx files converted to pdf in {stopwatch.Elapsed.TotalSeconds:F2} seconds");
+            Console.WriteLine("All conversions completed.");
         }
 
         private static string[] ExtractParagraphsFromDocx(string filePath)

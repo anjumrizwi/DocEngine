@@ -8,14 +8,20 @@
     using DocumentFormat.OpenXml.Wordprocessing;
     using PdfSharpCore.Pdf;
     using PdfSharpCore.Drawing;
-
+    using NLog;
+    using System.Diagnostics;
 
     internal class WordToPdfBatchConverter
     {
+        private static Logger logger = LogManager.GetCurrentClassLogger();
+
         public static void ConvertAllDocxInFolder(string inputFolder, string outputFolder)
         {
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             Directory.CreateDirectory(outputFolder);
+
+            logger.Info("Batch DocxToPdf Process started...");
+            var stopwatch = Stopwatch.StartNew();
 
             var docxFiles = Directory.GetFiles(inputFolder, "*.docx");
 
@@ -32,9 +38,13 @@
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"❌ Error converting {fileName}.docx: {ex.Message}");
+                    Console.WriteLine($"Error converting {fileName}.docx: {ex.Message}");
                 }
             }
+
+            stopwatch.Stop();
+            logger.Info($"[SUCCESS]: {docxFiles.Length} docx files converted to pdf in {stopwatch.Elapsed.TotalSeconds:F2} seconds");
+
         }
 
         private static string ExtractTextFromDocx(string path)
