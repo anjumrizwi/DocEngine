@@ -1,16 +1,15 @@
-﻿using static System.Net.Mime.MediaTypeNames;
-using System;
-using System.Collections.Generic;
-using System.IO;
+﻿
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
-using WordText = DocumentFormat.OpenXml.Wordprocessing.Text;
-
+using System.Linq;
+using NLog;
+using System.Diagnostics;
 namespace DocEngine.MailMerge
 {
 
     public static class OpenXmlMailMergeHelper
     {
+        private static Logger logger = LogManager.GetCurrentClassLogger();
         //const string FOLDER_PATH = @"D:\\Users\\anjum.rizwi\\Documents\\Valtech\\SAGENT-POC\\MailMergeFun\\MailMergeTestApp\";
         //const string TEMPLATE_PATH = FOLDER_PATH + @"template\";
         //const string OUTPUT_PATH = FOLDER_PATH + @"output\";
@@ -23,9 +22,8 @@ namespace DocEngine.MailMerge
         /// <param name="recipientData">List of field dictionaries for each recipient</param>
         public static void PerformBatchMailMerge(string templatePath, string outputDirectory, List<Dictionary<string, string>> recipientData)
         {
-            //Directory.CreateDirectory(outputDirectory);
-            //templatePath = templatePath;
-            //outputDirectory = OUTPUT_PATH;
+            logger.Info("Batch MailMerge Process started...");
+            var stopwatch = Stopwatch.StartNew();
 
             for (int i = 0; i < recipientData.Count; i++)
             {
@@ -34,24 +32,36 @@ namespace DocEngine.MailMerge
 
                 File.Copy(templatePath, outputPath, true);
 
-                using (var doc = WordprocessingDocument.Open(outputPath, true))
+                try
                 {
-                    var body = doc.MainDocumentPart.Document.Body;
-
-                    foreach (var text in body.Descendants<WordText>())
+                    using (var doc = WordprocessingDocument.Open(outputPath, true))
                     {
-                        foreach (var pair in recipientData[i])
+                        var body = doc.MainDocumentPart.Document.Body;
+
+                        foreach (var text in body.Descendants<Text>())
                         {
-                            if (text.Text.Contains("{{" + pair.Key + "}}"))
+                            //Console.WriteLine(text.Text);
+
+                            foreach (var pair in recipientData[i])
                             {
-                                text.Text = text.Text.Replace("{{" + pair.Key + "}}", pair.Value);
+                                if (text.Text.Contains(pair.Key))
+                                {
+                                    text.Text = text.Text.Replace(pair.Key, pair.Value);
+                                }
                             }
                         }
-                    }
 
-                    doc.MainDocumentPart.Document.Save();
+                        doc.MainDocumentPart.Document.Save();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    logger.Error(ex);
+                    logger.Error($"template:{templatePath} \n MailMerged: {outputPath}");
                 }
             }
+            stopwatch.Stop();
+            logger.Info($"[SUCCESS]: {recipientData.Count} file mail merged in {stopwatch.Elapsed.TotalSeconds:F2} seconds");
         }
 
         public static void PerformMailMerge(string templatePath, string outputPath, Dictionary<string, string> placeholders)
@@ -63,7 +73,7 @@ namespace DocEngine.MailMerge
             {
                 var body = doc.MainDocumentPart.Document.Body;
 
-                foreach (var text in body.Descendants<WordText>())
+                foreach (var text in body.Descendants<Text>())
                 {
                     foreach (var pair in placeholders)
                     {

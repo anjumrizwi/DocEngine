@@ -10,7 +10,7 @@ namespace DocEngine.Processor
     using PdfSharpCore.Pdf;
     using PdfSharpCore.Drawing;
 
-    public class WordToPdfParagraphPreserving
+    internal class WordToPdfParagraphPreserving
     {
         public static void ConvertAllDocxInFolder(string inputFolder, string outputFolder)
         {

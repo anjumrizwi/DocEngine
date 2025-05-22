@@ -1,10 +1,5 @@
 ﻿using DocEngine.MailMerge;
 using DocEngine.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DocEngine.Processor
 {
@@ -12,19 +7,32 @@ namespace DocEngine.Processor
     {
         public static void Convert(string basePath)
         {
-            PerformBatchMailMerge (basePath);
+            //MailMerge-Option1: Required: License to use NGS.Templater;
+            //MailMergeUsingTemplater();
+
+            //MailMerge-Option2: DocumentFormat.OpenXml: MIT license
+            PerformBatchMailMerge(basePath, 10000);
+
             //ConvertDocxToPdf(basePath);
             //ConvertBatchDocxToPdf(basePath);
-            PreserveWordToPdfParagraph(basePath);
-            ConvertPdfToPrn(basePath);
+            //PreserveWordToPdfParagraph(basePath);
+            //ConvertPdfToPrn(basePath);
         }
 
-        private static void PerformBatchMailMerge(string basePath)
+        private static void PerformBatchMailMerge(string basePath, int recipientCount)
         {
             var templatePath = Path.Combine(basePath, "template","Business-Plan-Word-Template.docx");
             var outputFilePath = Path.Combine(basePath, "docx");
 
-            OpenXmlMailMergeHelper.PerformBatchMailMerge(templatePath, outputFilePath, DataHelper.GetRecepientData());
+            OpenXmlMailMergeHelper.PerformBatchMailMerge(templatePath, outputFilePath, DataHelper.GetRecepientData(recipientCount));
+        }
+
+        private static void MailMergeUsingTemplater()
+        {
+            //var templatePath = Path.Combine(basePath, "template", "Business-Plan-Word-Template.docx");
+            //var outputFilePath = Path.Combine(basePath, "docx");
+
+            TemplaterMailMerge.MailMerge();
         }
 
         private static void ConvertDocxToPdf(string basePath)

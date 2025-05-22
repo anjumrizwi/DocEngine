@@ -10,7 +10,7 @@
     using PdfSharpCore.Drawing;
 
 
-    public class WordToPdfBatchConverter
+    internal class WordToPdfBatchConverter
     {
         public static void ConvertAllDocxInFolder(string inputFolder, string outputFolder)
         {

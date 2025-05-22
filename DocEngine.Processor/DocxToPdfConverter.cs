@@ -14,7 +14,7 @@
     using Wp = DocumentFormat.OpenXml.Wordprocessing;
     using IOPath = System.IO.Path;
 
-    public static class DocxToPdfConverter
+    internal static class DocxToPdfConverter
     {
         public static void ConvertAllInFolder(string inputFolder, string outputFolder)
         {
