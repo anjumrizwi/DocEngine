@@ -4,7 +4,7 @@
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public static void ConvertAllInFolder(string inputFolder, string outputFolder, string archiveFolder, Action<string, string> DocxToPdf)
+        public static void ConvertAllDocx2Pdf(string inputFolder, string outputFolder, string archiveFolder, Action<string, string> DocxToPdf)
         {
             if (!System.IO.Directory.Exists(inputFolder))
                 throw new System.IO.DirectoryNotFoundException($"Input folder not found: {inputFolder}");

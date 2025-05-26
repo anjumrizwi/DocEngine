@@ -46,7 +46,7 @@ namespace DocEngine.Processor
             string outputFolder = Path.Combine(basePath, "pdf");
             string archiveFolder = Path.Combine(basePath, "archieve");
 
-            DocxToPdfConverter.ConvertAllInFolder(inputFolder, outputFolder, archiveFolder);
+            (new DocxToPdfConverter()).ConvertAllInFolder(inputFolder, outputFolder, archiveFolder);
         }
 
         private static void ConvertBatchDocxToPdf(string basePath)

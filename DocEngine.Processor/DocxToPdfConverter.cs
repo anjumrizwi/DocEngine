@@ -15,53 +15,17 @@
     using System.Diagnostics;
     using DocumentFormat.OpenXml.Wordprocessing;
 
-    internal static class DocxToPdfConverter
+    internal class DocxToPdfConverter: BaseConverter
     {
-        private static Logger logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
-        public static void ConvertAllInFolder(string inputFolder, string outputFolder, string archiveFolder)
+        public void ConvertAllInFolder(string inputFolder, string outputFolder, string archiveFolder)
         {
-            if (!System.IO.Directory.Exists(inputFolder))
-                throw new DirectoryNotFoundException($"Input folder not found: {inputFolder}");
-
-            if (!System.IO.Directory.Exists(outputFolder))
-                System.IO.Directory.CreateDirectory(outputFolder);
-
-            if (!System.IO.Directory.Exists(archiveFolder))
-                System.IO.Directory.CreateDirectory(archiveFolder);
-
-            logger.Info("DocxToPdf Batch Process started...");
-            var stopwatch = Stopwatch.StartNew();
-
-            var docxFiles = System.IO.Directory.GetFiles(inputFolder, "*.docx");
-            var errCnt = 0;
-            foreach (var file in docxFiles)
-            {
-                string fileName = System.IO.Path.GetFileNameWithoutExtension(file);
-                string outputFile = System.IO.Path.Combine(outputFolder, fileName + ".pdf");
-                string archiveFile = System.IO.Path.Combine(archiveFolder, System.IO.Path.GetFileName(file));
-
-                try
-                {
-                    Convert(file, outputFile);
-                    System.IO.File.Move(file, archiveFile);
-                }
-                catch (Exception ex)
-                {
-                    errCnt++;
-                    logger.Error($"Error converting {fileName}: {ex.Message}");
-                }
-            }
-
-            stopwatch.Stop();
-            if (errCnt > 0)
-                logger.Error($"[ERROR]: {errCnt} docx files failed to convert to pdf.");
-
-            logger.Info($"[SUCCESS]: {docxFiles.Length - errCnt} docx files converted to pdf in {stopwatch.Elapsed.TotalSeconds:F2} seconds");
+            ConvertAllDocx2Pdf(inputFolder, outputFolder, archiveFolder, Convert);
             logger.Info("Docx2Pdf Batch conversion completed.");
         }
 
-        private static void Convert(string docxPath, string outputPdfPath)
+        private void Convert(string docxPath, string outputPdfPath)
         {
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
@@ -77,60 +41,10 @@
 
             foreach (var element in body.Elements())
             {
-                if (y > pageHeight - margin)
-                {
-                    page = document.AddPage();
-                    gfx = XGraphics.FromPdfPage(page);
-                    y = margin;
-                }
-
                 switch (element)
                 {
                     case Wp.Paragraph para:
-                        foreach (var run in para.Elements<Wp.Run>())
-                        {
-                            if (run.Descendants<Wp.Break>().Any(b => b.Type?.Value == Wp.BreakValues.Page))
-                            {
-                                page = document.AddPage();
-                                gfx = XGraphics.FromPdfPage(page);
-                                y = margin;
-                                continue;
-                            }
-
-                            if (run.Descendants<Blip>().Any())
-                            {
-                                DrawInlineImage(run, gfx, mainPart, ref y);
-                            }
-                            else
-                            {
-                                var fieldCode = run.Elements<FieldCode>().FirstOrDefault();
-                                if (fieldCode != null)
-                                {
-                                    var mergeText = $"[{fieldCode.Text.Trim()}]";
-                                    var mergeFont = new XFont("Verdana", 12, XFontStyle.Italic);
-                                    gfx.DrawString(mergeText, mergeFont, XBrushes.Red, new XPoint(margin, y));
-                                    y += 20;
-                                    continue;
-                                }
-
-                                var innerText = run.InnerText.Trim();
-                                if (!string.IsNullOrEmpty(innerText))
-                                {
-                                    var font = new XFont("Verdana", 12, GetFontStyle(run));
-                                    gfx.DrawString(innerText, font, XBrushes.Black, new XPoint(margin, y));
-                                    y += 20;
-                                }
-                            }
-                        }
-
-                        foreach (var simpleField in para.Elements<SimpleField>())
-                        {
-                            var simpleText = simpleField.InnerText;
-                            var simpleFont = new XFont("Verdana", 12);
-                            gfx.DrawString(simpleText, simpleFont, XBrushes.Black, new XPoint(margin, y));
-                            y += 20;
-                        }
-
+                        ProcessParagraph(para, mainPart, ref gfx, ref page, document, margin, pageHeight, pageWidth, ref y);
                         break;
 
                     case Wp.Table table:
@@ -145,26 +59,26 @@
         private static void DrawInlineImage(Wp.Run run, XGraphics gfx, MainDocumentPart mainPart, ref double y)
         {
             var blip = run.Descendants<Blip>().FirstOrDefault();
-            if (blip?.Embed == null) return;
+            if (blip == null || blip.Embed == null) return;
 
-            var part = (ImagePart)mainPart.GetPartById(blip.Embed.Value);
+            var part = mainPart.GetPartById(blip.Embed.Value) as ImagePart;
+            if (part == null) return;
+
             using var stream = part.GetStream();
             using var ms = new MemoryStream();
             stream.CopyTo(ms);
 
             var img = XImage.FromStream(() => new MemoryStream(ms.ToArray()));
-            double maxWidth = gfx.PageSize.Width - 80;
-            double scale = maxWidth / img.PixelWidth;
-            double scaledHeight = img.PixelHeight * scale;
-            double x = (gfx.PageSize.Width - maxWidth) / 2;
-            gfx.DrawImage(img, x, y, maxWidth, scaledHeight);
-            y += scaledHeight + 10;
+            double x = (gfx.PageSize.Width - img.PixelWidth) / 2;
+            gfx.DrawImage(img, x, y, img.PixelWidth, img.PixelHeight);
+            // Maintain proper layout after image rendering
+            y += img.PixelHeight + 10;
         }
 
         private static void DrawAdvancedTable(XGraphics gfx, Wp.Table table, ref double y, double pageHeight, double pageWidth, double margin, PdfDocument document)
         {
             var rows = table.Elements<Wp.TableRow>().ToList();
-            if (!rows.Any()) return;
+            if (rows.Count == 0) return;
 
             var columnCount = rows[0].Elements<Wp.TableCell>().Count();
             var columnWidths = CalculateColumnWidths(gfx, rows, columnCount, pageWidth, margin);
@@ -224,6 +138,53 @@
             }
 
             return maxWidths.ToList();
+        }
+
+        private static void ProcessParagraph(Wp.Paragraph para, MainDocumentPart mainPart, ref XGraphics gfx, ref PdfPage page, PdfDocument document, double margin, double pageHeight, double pageWidth, ref double y)
+        {
+            foreach (var run in para.Elements<Wp.Run>())
+            {
+                if (run.Descendants<Wp.Break>().Any(b => b.Type?.Value == Wp.BreakValues.Page))
+                {
+                    page = document.AddPage();
+                    gfx = XGraphics.FromPdfPage(page);
+                    y = margin;
+                    continue;
+                }
+
+                if (run.Descendants<Blip>().Any())
+                {
+                    DrawInlineImage(run, gfx, mainPart, ref y);
+                }
+                else
+                {
+                    var fieldCode = run.Elements<FieldCode>().FirstOrDefault();
+                    if (fieldCode != null)
+                    {
+                        var mergeText = $"[{fieldCode.Text.Trim()}]";
+                        var mergeFont = new XFont("Verdana", 12, XFontStyle.Italic);
+                        gfx.DrawString(mergeText, mergeFont, XBrushes.Red, new XPoint(margin, y));
+                        y += 20;
+                        continue;
+                    }
+
+                    var innerText = run.InnerText.Trim();
+                    if (!string.IsNullOrEmpty(innerText))
+                    {
+                        var font = new XFont("Verdana", 12, GetFontStyle(run));
+                        gfx.DrawString(innerText, font, XBrushes.Black, new XPoint(margin, y));
+                        y += 20;
+                    }
+                }
+            }
+
+            foreach (var simpleField in para.Elements<SimpleField>())
+            {
+                var simpleText = simpleField.InnerText;
+                var simpleFont = new XFont("Verdana", 12);
+                gfx.DrawString(simpleText, simpleFont, XBrushes.Black, new XPoint(margin, y));
+                y += 20;
+            }
         }
 
         private static XFontStyle GetFontStyle(Wp.Run run)
