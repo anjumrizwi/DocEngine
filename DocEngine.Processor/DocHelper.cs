@@ -11,20 +11,22 @@ namespace DocEngine.Processor
             //MailMergeUsingTemplater();
 
             //MailMerge-Option2: DocumentFormat.OpenXml: MIT license
-            PerformBatchMailMerge(basePath, 3);
+            PerformBatchMailMerge(basePath, 5);
 
             //Convert: Docx to Pdf
             ConvertDocxToPdf(basePath); //Image size issue
             //ConvertBatchDocxToPdf(basePath); //Single line output pdf file
             //PreserveWordToPdfParagraph(basePath); //Image missing
+            //ConvertDocxToPdfWithImage(basePath); //Only Image coming
 
             //Convert: Pdf to Prn
-            //ConvertPdfToPrn(basePath);
+            ConvertPdfToPrn(basePath);
+            Console.WriteLine("All conversions completed.");
         }
 
         private static void PerformBatchMailMerge(string basePath, int recipientCount)
         {
-            var templatePath = Path.Combine(basePath, "template","Business-Plan-Word-Template.docx");
+            var templatePath = Path.Combine(basePath, "template", "Business-Plan-Word-Template.docx");
             var outputFilePath = Path.Combine(basePath, "docx");
 
             OpenXmlMailMergeHelper.PerformBatchMailMerge(templatePath, outputFilePath, DataHelper.GetRecepientData(recipientCount));
@@ -39,41 +41,48 @@ namespace DocEngine.Processor
         }
 
         private static void ConvertDocxToPdf(string basePath)
-        {       
+        {
             string inputFolder = Path.Combine(basePath, "docx");
             string outputFolder = Path.Combine(basePath, "pdf");
+            string archiveFolder = Path.Combine(basePath, "archieve");
 
-            DocxToPdfConverter.ConvertAllInFolder(inputFolder, outputFolder);
-
-            Console.WriteLine("All conversions completed.");
+            DocxToPdfConverter.ConvertAllInFolder(inputFolder, outputFolder, archiveFolder);
         }
 
         private static void ConvertBatchDocxToPdf(string basePath)
         {
             string inputFolder = Path.Combine(basePath, "docx");
             string outputFolder = Path.Combine(basePath, "pdf");
+            string archiveFolder = Path.Combine(basePath, "archieve");
 
             WordToPdfBatchConverter.ConvertAllDocxInFolder(inputFolder, outputFolder);
-
-            Console.WriteLine("All bach conversions completed.");
         }
 
         private static void PreserveWordToPdfParagraph(string basePath)
         {
             string inputFolder = Path.Combine(basePath, "docx");
             string outputFolder = Path.Combine(basePath, "pdf");
+            string archiveFolder = Path.Combine(basePath, "archieve");
 
             WordToPdfParagraphPreserving.ConvertAllDocxInFolder(inputFolder, outputFolder);
+        }
 
-            Console.WriteLine("All batch conversions completed.");
+        private static void ConvertDocxToPdfWithImage(string basePath)
+        {
+            string inputFolder = Path.Combine(basePath, "docx");
+            string outputFolder = Path.Combine(basePath, "pdf");
+            string archiveFolder = Path.Combine(basePath, "archieve");
+
+            DocxToPdfWithImageConverter.ConvertAllDocxInFolder(inputFolder, outputFolder, archiveFolder);
         }
 
         private static void ConvertPdfToPrn(string basePath)
         {
             string inputFolder = Path.Combine(basePath, "pdf");
             string outputFolder = Path.Combine(basePath, "prn");
+            string archiveFolder = Path.Combine(basePath, "archieve");
 
-            PdfToPrnConverter.ConvertAllInFolder(inputFolder, outputFolder);
+            PdfToPrnConverter.ConvertAllInFolder(inputFolder, outputFolder, archiveFolder);
         }
     }
 }

@@ -13,37 +13,58 @@ namespace DocEngine.Processor
     using System.IO.Packaging;
     using System.Reflection;
     using System.Runtime.Intrinsics.X86;
+    using NLog;
 
     public class PdfToPrnConverter
     {
-        public static void ConvertAllInFolder(string inputFolder, string outputFolder)
+        private static Logger logger = LogManager.GetCurrentClassLogger();
+
+        public static void ConvertAllInFolder(string inputFolder, string outputFolder, string archiveFolder)
         {
+            #region Directory Check
             if (!Directory.Exists(inputFolder))
                 throw new DirectoryNotFoundException($"Input folder not found: {inputFolder}");
 
             if (!Directory.Exists(outputFolder))
                 Directory.CreateDirectory(outputFolder);
 
-            var pdfFiles = Directory.GetFiles(inputFolder, "*.pdf");
+            if (!Directory.Exists(outputFolder))
+                Directory.CreateDirectory(outputFolder);
 
+            if (!Directory.Exists(archiveFolder))
+                Directory.CreateDirectory(archiveFolder);
+
+            #endregion
+
+            var pdfFiles = Directory.GetFiles(inputFolder, "*.pdf");
+            logger.Info("PDF to Prm Batch conversion started...");
+            if (pdfFiles.Length == 0)
+            {
+                logger.Info("No PDF files found in the input folder.");
+                return;
+            }
             foreach (var file in pdfFiles)
             {
                 string fileName = System.IO.Path.GetFileNameWithoutExtension(file);
                 string prnFile = System.IO.Path.Combine(outputFolder, fileName + ".prn");
+                string archiveFile = System.IO.Path.Combine(archiveFolder, System.IO.Path.GetFileName(file));
 
                 try
                 {
-                    Console.WriteLine($"Converting: {fileName}.pdf → {fileName}.prn");
+                    //Console.WriteLine($"Converting: {fileName}.pdf -> {fileName}.prn");
                     ConvertPdfToPrnUsingPrintCmd(file, prnFile);
                     //Convert(file, prnFile);
+
+                    File.Move(file, archiveFile);
+                    //logger.Info($"Moved {fileName}.docx to archive folder: {archiveFile}");
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"❌ Error converting {fileName}: {ex.Message}");
+                    Console.WriteLine($"Error converting {fileName}: {ex.Message}");
                 }
             }
 
-            Console.WriteLine("✅ PDF to Prm Batch conversion complete.");
+            logger.Info("PDF to PRN Batch conversion completed.");
         }
 
         public static void Convert(string pdfFilePath, string prnFilePath)
@@ -53,7 +74,7 @@ namespace DocEngine.Processor
                 // Validate input file
                 if (!File.Exists(pdfFilePath))
                 {
-                    Console.WriteLine("PDF file does not exist.");
+                    logger.Info("PDF file does not exist.");
                     return;
                 }
 

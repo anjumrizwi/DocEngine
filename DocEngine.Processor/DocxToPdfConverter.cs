@@ -10,7 +10,6 @@
     using PdfSharpCore.Pdf;
     using System.Text;
 
-    // Aliases to avoid conflicts
     using Wp = DocumentFormat.OpenXml.Wordprocessing;
     using NLog;
     using System.Diagnostics;
@@ -20,42 +19,49 @@
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
-        public static void ConvertAllInFolder(string inputFolder, string outputFolder)
+        public static void ConvertAllInFolder(string inputFolder, string outputFolder, string archiveFolder)
         {
-            if (!Directory.Exists(inputFolder))
+            if (!System.IO.Directory.Exists(inputFolder))
                 throw new DirectoryNotFoundException($"Input folder not found: {inputFolder}");
 
-            if (!Directory.Exists(outputFolder))
-                Directory.CreateDirectory(outputFolder);
+            if (!System.IO.Directory.Exists(outputFolder))
+                System.IO.Directory.CreateDirectory(outputFolder);
 
-            logger.Info("Batch DocxToPdf Process started...");
+            if (!System.IO.Directory.Exists(archiveFolder))
+                System.IO.Directory.CreateDirectory(archiveFolder);
+
+            logger.Info("DocxToPdf Batch Process started...");
             var stopwatch = Stopwatch.StartNew();
 
-            var docxFiles = Directory.GetFiles(inputFolder, "*.docx");
-
+            var docxFiles = System.IO.Directory.GetFiles(inputFolder, "*.docx");
+            var errCnt = 0;
             foreach (var file in docxFiles)
             {
                 string fileName = System.IO.Path.GetFileNameWithoutExtension(file);
                 string outputFile = System.IO.Path.Combine(outputFolder, fileName + ".pdf");
+                string archiveFile = System.IO.Path.Combine(archiveFolder, System.IO.Path.GetFileName(file));
 
                 try
                 {
-                    Console.WriteLine($"Converting: {fileName}.docx -> {fileName}.pdf");
                     Convert(file, outputFile);
+                    System.IO.File.Move(file, archiveFile);
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Error converting {fileName}: {ex.Message}");
+                    errCnt++;
+                    logger.Error($"Error converting {fileName}: {ex.Message}");
                 }
             }
-            
-            stopwatch.Stop();
-            logger.Info($"[SUCCESS]: {docxFiles.Length} docx files converted to pdf in {stopwatch.Elapsed.TotalSeconds:F2} seconds");
 
-            Console.WriteLine("Docx2Pdf Batch conversion complete.");
+            stopwatch.Stop();
+            if (errCnt > 0)
+                logger.Error($"[ERROR]: {errCnt} docx files failed to convert to pdf.");
+
+            logger.Info($"[SUCCESS]: {docxFiles.Length - errCnt} docx files converted to pdf in {stopwatch.Elapsed.TotalSeconds:F2} seconds");
+            logger.Info("Docx2Pdf Batch conversion completed.");
         }
 
-        public static void Convert(string docxPath, string outputPdfPath)
+        private static void Convert(string docxPath, string outputPdfPath)
         {
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
@@ -97,13 +103,34 @@
                             }
                             else
                             {
-                                var text = run.InnerText.Trim();
-                                if (string.IsNullOrEmpty(text)) continue;
-                                var font = new XFont("Verdana", 12, GetFontStyle(run));
-                                gfx.DrawString(text, font, XBrushes.Black, new XPoint(margin, y));
-                                y += 20;
+                                var fieldCode = run.Elements<FieldCode>().FirstOrDefault();
+                                if (fieldCode != null)
+                                {
+                                    var mergeText = $"[{fieldCode.Text.Trim()}]";
+                                    var mergeFont = new XFont("Verdana", 12, XFontStyle.Italic);
+                                    gfx.DrawString(mergeText, mergeFont, XBrushes.Red, new XPoint(margin, y));
+                                    y += 20;
+                                    continue;
+                                }
+
+                                var innerText = run.InnerText.Trim();
+                                if (!string.IsNullOrEmpty(innerText))
+                                {
+                                    var font = new XFont("Verdana", 12, GetFontStyle(run));
+                                    gfx.DrawString(innerText, font, XBrushes.Black, new XPoint(margin, y));
+                                    y += 20;
+                                }
                             }
                         }
+
+                        foreach (var simpleField in para.Elements<SimpleField>())
+                        {
+                            var simpleText = simpleField.InnerText;
+                            var simpleFont = new XFont("Verdana", 12);
+                            gfx.DrawString(simpleText, simpleFont, XBrushes.Black, new XPoint(margin, y));
+                            y += 20;
+                        }
+
                         break;
 
                     case Wp.Table table:
@@ -126,8 +153,12 @@
             stream.CopyTo(ms);
 
             var img = XImage.FromStream(() => new MemoryStream(ms.ToArray()));
-            gfx.DrawImage(img, 40, y, 100, 100);
-            y += 110;
+            double maxWidth = gfx.PageSize.Width - 80;
+            double scale = maxWidth / img.PixelWidth;
+            double scaledHeight = img.PixelHeight * scale;
+            double x = (gfx.PageSize.Width - maxWidth) / 2;
+            gfx.DrawImage(img, x, y, maxWidth, scaledHeight);
+            y += scaledHeight + 10;
         }
 
         private static void DrawAdvancedTable(XGraphics gfx, Wp.Table table, ref double y, double pageHeight, double pageWidth, double margin, PdfDocument document)
@@ -212,6 +243,4 @@
             };
         }
     }
-
-
 }
